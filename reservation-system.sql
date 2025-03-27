@@ -6,36 +6,36 @@ CREATE TABLE IF NOT EXISTS "user" (
 );
 
 CREATE TABLE IF NOT EXISTS test_categorie (
-    id bigint PRIMARY KEY,
+    test_categorie_id bigint PRIMARY KEY,
     name varchar(255) NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS test_info (
-    id bigint PRIMARY KEY,
-    name varchar(255) NOT NULL,
-    description varchar(3000),
-    category_id bigint
+    test_info_id bigint PRIMARY KEY,
+    test_name varchar(255) NOT NULL,
+    test_description varchar(3000),
+    test_category_id bigint
 );
 
-CREATE TABLE IF NOT EXISTS schedules (
-    id bigint PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS test_schedules (
+    test_schedules_id bigint PRIMARY KEY,
     test_id bigint NOT NULL,
     start_time timestamp NOT NULL,
     end_time timestamp NOT NULL,
     max_capacity integer
 );
 
-CREATE TABLE IF NOT EXISTS reservations (
-    id bigint PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS test_reservations (
+    test_reservations_id bigint PRIMARY KEY,
     user_id bigint NOT NULL,
-    schedule_id bigint NOT NULL,
+    test_schedule_id bigint NOT NULL,
     status varchar(20) NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS reservation_log (
-    id bigint PRIMARY KEY,
+    reservation_log_id bigint PRIMARY KEY,
     reservation_id bigint NOT NULL,
     action varchar(20) NOT NULL,
-    timestamp timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    timestamp timestamp NOT NULL,
     performed_by bigint NOT NULL
 );

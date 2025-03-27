@@ -1,10 +1,11 @@
 from pydantic import BaseModel
 
-class UserCreate(BaseModel):
+class LoginForm(BaseModel):
     name: str
     password: str
 
-class UserRead(BaseModel):
+
+class LoginResponse(BaseModel):
     user_id: int
     name: str
     role: str
