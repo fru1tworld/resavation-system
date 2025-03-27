@@ -1,7 +1,6 @@
 import time
 import threading
 
-# 설정값
 EPOCH = 1609459200000  
 MACHINE_ID = 1         
 SEQUENCE_MASK = 0xFFF  

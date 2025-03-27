@@ -8,10 +8,8 @@ services:
       - "${WEB_PORT}:80"
     depends_on:
       - db
-    environment:
-      - DATABASE_URL=${DATABASE_URL}
-    env_file:
-      - .env
+    networks:
+      - app-network
 
   db:
     image: postgres:13
@@ -23,8 +21,17 @@ services:
       - POSTGRES_DB=${POSTGRES_DB}
     volumes:
       - pgdata:/var/lib/postgresql/data
+      - ./reservation-system.sql:/docker-entrypoint-initdb.d/reservation-system.sql
     env_file:
       - .env
+    networks:
+      - app-network
+    ports:
+      - "5432:5432"
 
 volumes:
   pgdata:
+
+networks:
+  app-network:
+    driver: bridge

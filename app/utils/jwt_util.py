@@ -2,7 +2,7 @@ import os
 from datetime import datetime, timedelta, timezone
 from jose import jwt, JWTError
 
-SECRET_KEY = os.getenv("SECRET_KEY", "your-secret-key")
+SECRET_KEY = os.getenv("SECRET_KEY", "happycat")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
