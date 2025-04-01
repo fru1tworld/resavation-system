@@ -34,16 +34,15 @@ def cancel_reservation_router(
 
 @router.post("/adm/batch-confirm")
 def confirm_reservations_batch_router(
-    request: Request,
     db: Session = Depends(get_db)
 ):
     return confirm_reservations_batch(db)
 
 @router.put("/adm/status")
 def update_reservation_status_router(
+    request: Request,
     id: int = Query(..., description="업데이트할 예약 ID"),
     status: str = Query(..., description="변경할 상태 (PENDING, CONFIRM, CANCEL)"),
-    request: Request,
     db: Session = Depends(get_db)
 ):
     user_role = request.state.user_role
