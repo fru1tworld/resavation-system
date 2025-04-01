@@ -1,18 +1,27 @@
-### 실행방법
+# 시험 예약 시스템 (Reservation System)
+
+시험 예약 관리를 위한 REST API 기반 시스템입니다.
+
+## 실행 방법
 
 ```bash
 docker-compose up -d
 ```
 
-### API 문서 정보
+## API 문서
 
-## 실행 후
+서버 실행 후 다음 URL에서 Swagger UI를 통해 API 문서를 확인할 수 있습니다:
 
-URL: http://localhost:8000/docs
+- http://localhost:8000/docs
 
-에서 확인할 수 있습니다.
+## 시스템 요구 사항
 
-### Flow_chart
+- 동시간에 최대 5만명까지 예약 가능 (초과 불가)
+- 한 사용자는 동시간대에 여러 개의 예약이 가능
+
+## 시스템 아키텍처
+
+### Flow Chart
 
 ```mermaid
 flowchart TB
@@ -90,7 +99,7 @@ flowchart TB
     Auth --> 권한_검증
 ```
 
-### ERD
+### 데이터베이스 구조 (ERD)
 
 ```mermaid
 erDiagram
@@ -124,7 +133,7 @@ erDiagram
 
     exam_schedule {
         bigint exam_schedules_id PK
-        bigint exam_id FK
+        bigint exam_info_id FK
         timestamp start_time
         timestamp end_time
         timestamp created_at
@@ -147,11 +156,49 @@ erDiagram
     }
 ```
 
-### 방식
+## 시스템 설계 특징
 
-- USER와 ADMIN은 RBAC 방식으로 user table에 role을 추가하여 구분하였습니다.
-- test는 카테고리가 존재하고 하나의 카테고리는 0개 이상의 시험 정보를 가지고 있을 수 있습니다.
-- 그리고 시험 정보는 0개 이상의 스케쥴을 가지고 있을 수 있습니다.
-- 스케쥴을 생성하는 경우 time_slot이 시작과 끝에 row 들을 확인해서 존재하지 않으면 생성하고, 존재할 경우 생성하지 않습니다.
-- time_slot은 examinee_count라는 컬럼이 존재하여 examinee_count이 max_capacity 이하인 경우에만 ADMIN이 확정지을 수 있습니다.
-- 이때 time_slot은 exam_schedule에 종속적이지 않기 때문에 독립적으로 관리할 수 있습니다.
+### 사용자 권한 관리
+
+- RBAC(Role-Based Access Control) 방식으로 `users` 테이블의 `role` 필드를 통해 USER와 ADMIN을 구분
+- 관리자 전용 API 엔드포인트는 `/adm` 경로로 통일
+
+### 시험 관리 구조
+
+- 시험은 계층 구조로 설계:
+  - 카테고리(exam_categorie) → 시험 정보(exam_info) → 시험 일정(exam_schedule)
+- 각 카테고리는 여러 시험 정보를 포함할 수 있음
+- 각 시험 정보는 여러 스케줄을 가질 수 있음
+
+### 시간 슬롯 관리
+
+- 시험 일정을 생성할 때 시작 시간과 종료 시간 사이의 시간 슬롯을 자동으로 생성
+- 이미 존재하는 시간 슬롯은 중복 생성하지 않음
+- 시간 슬롯은 독립적으로 관리되며, 특정 시험 일정에 종속되지 않음
+
+### 예약 프로세스
+
+- 사용자 예약 요청 시 최초 상태는 `PENDING`
+- 관리자가 배치 처리를 통해 수용 인원을 확인하여 예약을 확정(`CONFIRM`) 또는 취소(`CANCEL`)
+- 시험 시작 3일 전부터는 예약 취소 불가능
+
+### 용량 관리
+
+- 동시간대 최대 5만명까지 예약 가능
+- 각 시간 슬롯의 `examinee_count` 필드를 통해 현재 인원 추적
+
+## 기술 스택
+
+- **백엔드**: FastAPI
+- **데이터베이스**: PostgreSQL
+- **인증**: JWT
+- **배포**: Docker, Docker Compose
+- **ID 생성**: Snowflake 알고리즘
+
+## 개발자 정보
+
+- GitHub: [https://github.com/fru1tworld/resavation-system](https://github.com/fru1tworld/resavation-system)
+
+```
+
+```
