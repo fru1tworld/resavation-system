@@ -24,8 +24,8 @@ def verify_access_token(token: str) -> dict:
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         return payload
-    except JWTError as e:
-        raise JWTError("토큰 검증에 실패하였습니다.") from e
+    except JWTError:
+        raise JWTError("토큰 검증에 실패하였습니다.")
 
 def is_admin_token(token: str) -> bool:
     try:

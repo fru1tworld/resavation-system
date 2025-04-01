@@ -21,7 +21,7 @@ def is_post_excluded_path(method: str, path: str) -> bool:
     return method.upper() == "POST" and any(path.startswith(item) for item in POST_ONLY_EXCLUDED_PATHS)
 
 def is_admin_path(path: str) -> bool:
-    return any(path.startswith(item) for item in ADMIN_PATHS)
+    return any(path.endswith(item) for item in ADMIN_PATHS)
 
 async def auth_middleware(request: Request, call_next):
     if is_excluded_path(request.url.path):
@@ -65,4 +65,4 @@ async def auth_middleware(request: Request, call_next):
     except JWTError:
         return JSONResponse(status_code=401, content={"detail": "유효하지 않은 토큰입니다."})
     except Exception as e:
-        return JSONResponse(status_code=500, content={"detail": str(e)})
+        return JSONResponse(status_code=500, content={"detail": "서버 오류가 발생했습니다."})

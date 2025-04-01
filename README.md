@@ -12,6 +12,84 @@ URL: http://localhost:8000/docs
 
 에서 확인할 수 있습니다.
 
+### Flow_chart
+
+```mermaid
+flowchart TB
+    %% 메인 시스템 컴포넌트
+    Client([사용자 브라우저]) <--> Auth{인증 미들웨어}
+    Auth --> Route[라우터]
+    Route --> Controller[컨트롤러]
+    Controller --> DB[(데이터베이스)]
+
+    %% 인증 플로우
+    subgraph 인증_프로세스
+        Login[로그인] --> |"유저네임/비밀번호"| AuthController[인증 컨트롤러]
+        AuthController --> |"유저 검증"| BCrypt[비밀번호 검증]
+        AuthController --> |"성공 시"| JWT[JWT 토큰 생성]
+        JWT --> |"토큰 쿠키 저장"| Response[응답 & 사용자 정보 반환]
+    end
+
+    %% 사용자 플로우
+    subgraph 사용자_관리
+        Register[일반 사용자 등록] --> UserController[유저 컨트롤러]
+        RegisterAdmin[관리자 등록] --> UserController
+        UserController --> |"Snowflake ID 생성"| Snowflake[ID 생성기]
+        UserController --> |"비밀번호 해싱"| BCryptHash[비밀번호 해싱]
+        UserController --> |"사용자 DB 저장"| UserDB[(Users)]
+    end
+
+    %% 시험 카테고리 및 정보 관리
+    subgraph 시험_관리
+        CategoryCreate[카테고리 생성] --> |"관리자 권한"| CategoryController[카테고리 컨트롤러]
+        CategoryController --> CategoryDB[(시험 카테고리)]
+
+        ExamCreate[시험 정보 생성] --> |"관리자 권한"| ExamController[시험 정보 컨트롤러]
+        ExamController --> ExamInfoDB[(시험 정보)]
+
+        ScheduleCreate[시험 일정 생성] --> |"관리자 권한"| ScheduleController[시험 일정 컨트롤러]
+        ScheduleController --> |"시간 슬롯 생성"| TimeSlotCreate[시간 슬롯 생성]
+        ScheduleController --> ScheduleDB[(시험 일정)]
+        TimeSlotCreate --> TimeslotDB[(시간 슬롯)]
+    end
+
+    %% 예약 프로세스
+    subgraph 예약_프로세스
+        ReservationCreate[예약 요청] --> ReservationController[예약 컨트롤러]
+        ReservationController --> |"예약 상태: PENDING"| ReservationDB[(예약)]
+        BatchConfirm[배치 예약 확인] --> |"관리자 작업"| ReservationBatchController[배치 예약 컨트롤러]
+        ReservationBatchController --> |"수용 인원 확인"| CapacityCheck{인원 초과?}
+        CapacityCheck --> |"No"| ConfirmUpdate[예약 상태: CONFIRM]
+        CapacityCheck --> |"Yes"| CancelUpdate[예약 상태: CANCEL]
+        ConfirmUpdate --> |"슬롯 인원 증가"| TimeslotUpdate[시간 슬롯 업데이트]
+        CancelUpdate --> ReservationDB
+        TimeslotUpdate --> TimeslotDB
+        ReservationCancel[예약 취소] --> |"시험 3일 전 검증"| CancelCheck{취소 가능?}
+        CancelCheck --> |"Yes"| CancelProcess[취소 처리]
+        CancelCheck --> |"No"| CancelReject[취소 거부]
+        CancelProcess --> |"슬롯 인원 감소"| TimeslotUpdate
+    end
+
+    %% 미들웨어 검증
+    subgraph 권한_검증
+        AuthCheck{인증 필요 경로?} --> |"Yes"| TokenCheck{토큰 존재?}
+        AuthCheck --> |"No"| NextHandler[다음 핸들러]
+        TokenCheck --> |"Yes"| ValidateToken{토큰 유효?}
+        TokenCheck --> |"No"| AuthError[인증 오류]
+        ValidateToken --> |"Yes"| AdminCheck{관리자 경로?}
+        ValidateToken --> |"No"| AuthError
+        AdminCheck --> |"Yes & 관리자"| NextHandler
+        AdminCheck --> |"Yes & 일반 사용자"| ForbiddenError[권한 오류]
+        AdminCheck --> |"No"| NextHandler
+    end
+
+    %% 시스템 연결
+    인증_프로세스 --> 사용자_관리
+    사용자_관리 --> 시험_관리
+    시험_관리 --> 예약_프로세스
+    Auth --> 권한_검증
+```
+
 ### ERD
 
 ```mermaid

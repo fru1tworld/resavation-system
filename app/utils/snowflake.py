@@ -1,7 +1,7 @@
 import time
 import threading
 
-EPOCH = 1609459200000  
+EPOCH = 1743465600000  
 MACHINE_ID = 1         
 SEQUENCE_MASK = 0xFFF  
 

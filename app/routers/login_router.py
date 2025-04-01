@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Response, HTTPException, status
+from fastapi import APIRouter, Depends, Response, HTTPException, status, Request
 from sqlalchemy.orm import Session
 from app.db.session import get_db
 from app.schemas.login_schema import LoginForm, LoginResponse
@@ -32,7 +32,7 @@ def login_user(
         key="access_token", 
         value=access_token, 
         httponly=True,
-        max_age=86400  
+        max_age=86400  # 24시간 (초 단위)
     )
     
     return LoginResponse(

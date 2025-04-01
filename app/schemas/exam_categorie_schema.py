@@ -1,14 +1,13 @@
 from pydantic import BaseModel
+from datetime import datetime
 
 class ExamCategorieCreateRequest(BaseModel):
     name: str
-    descript: str
-    max_capacity: int
 
 class ExamCategorieResponse(BaseModel):
     exam_categorie_id: int
     name: str
-    role: str
+    created_at: datetime
 
     model_config = {
         'from_attributes': True

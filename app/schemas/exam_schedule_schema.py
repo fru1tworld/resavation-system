@@ -1,14 +1,17 @@
 from pydantic import BaseModel
+from datetime import datetime
 
 class ExamScheduleCreateRequest(BaseModel):
-    name: str
-    descript: str
-    max_capacity: int
+    exam_info_id: int
+    start_time: datetime
+    end_time: datetime
 
 class ExamScheduleResponse(BaseModel):
-    user_id: int
-    name: str
-    role: str
+    exam_schedules_id: int
+    exam_info_id: int
+    start_time: datetime
+    end_time: datetime
+    created_at: datetime
 
     model_config = {
         'from_attributes': True

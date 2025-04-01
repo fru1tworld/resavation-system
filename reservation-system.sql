@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS exam_info (
 );
 
 CREATE TABLE IF NOT EXISTS exam_schedule (
-    exam_schedules_id bigint PRIMARY KEY,
+    exam_schedule_id bigint PRIMARY KEY,
     exam_id bigint NOT NULL,
     start_time timestamp NOT NULL,
     end_time timestamp NOT NULL,
@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS exam_schedule (
 );
 
 CREATE TABLE IF NOT EXISTS exam_reservation (
-    exam_reservations_id bigint PRIMARY KEY,
+    exam_reservation_id bigint PRIMARY KEY,
     user_id bigint NOT NULL,
     exam_schedule_id bigint NOT NULL,
     reservation_status varchar(20) NOT NULL,
