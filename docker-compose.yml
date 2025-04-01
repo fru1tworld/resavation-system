@@ -20,7 +20,6 @@ services:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_DB=${POSTGRES_DB}
     volumes:
-      - pgdata:/var/lib/postgresql/data
       - ./reservation-system.sql:/docker-entrypoint-initdb.d/reservation-system.sql
     env_file:
       - .env
@@ -28,9 +27,6 @@ services:
       - app-network
     ports:
       - "5432:5432"
-
-volumes:
-  pgdata:
 
 networks:
   app-network:

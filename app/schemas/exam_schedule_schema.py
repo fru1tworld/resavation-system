@@ -1,10 +1,11 @@
 from pydantic import BaseModel
 
-class UserCreateRequest(BaseModel):
+class ExamScheduleCreateRequest(BaseModel):
     name: str
-    password: str
+    descript: str
+    max_capacity: int
 
-class UserResponse(BaseModel):
+class ExamScheduleResponse(BaseModel):
     user_id: int
     name: str
     role: str
